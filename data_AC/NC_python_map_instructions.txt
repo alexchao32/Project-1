@@ -1,0 +1,32 @@
+!pip install geopandas==0.3.0
+!pip install pyshp==1.2.10
+!pip install shapely==1.6.3
+
+
+import plotly.plotly as py
+import plotly.figure_factory as ff
+import plotly
+
+# You need to get your own API key for this
+# https://plot.ly/python/getting-started/
+plotly.tools.set_credentials_file(username='XXXXXXXXXXXX',api_key='XXXXXXXXXXXX')
+
+# Read in the file that has all the FIPS identifiers for each county
+file_5 = "USA_county_FIPS.csv"
+fips_df = pd.read_csv(file_5, encoding="utf-8")
+
+# Filter out for only NC counties
+fips_df = fips_df[fips_df['State'] == 'NC']
+
+
+
+# Remove extra stuff from county name
+day_mean_df['Name'] = day_mean_df['Name'].str.replace(' CountyDay', '')
+
+# Merge FIPS identifiers onto data by the county name
+day_mean_df = pd.merge(day_mean_df, fips_df, how='left', on='Name')
+
+# Plot the data
+fig = ff.create_choropleth(fips=day_mean_df['FIPS'], values=day_mean_df['Days'], scope=['NC'])
+
+py.iplot(fig, filename='choropleth_north_carolina')
